@@ -20,7 +20,7 @@ class CPU:
 
         self.pc = 0
 
-        self.FL = 1
+        self.FL = 0
 
         self.running = False
         self.codes = {
@@ -109,7 +109,9 @@ class CPU:
             self.reg[reg_a] /= self.reg[reg_b]
         elif op == "CMP":
             if self.reg[reg_a] == self.reg[reg_b]:
-                pass
+                self.FL = 1
+            else:
+                self.FL = 0
         else:
             raise Exception("Unsupported ALU operation")
 
@@ -251,10 +253,18 @@ class CPU:
                 self.pc += 2
 
             elif ir == self.codes["JEQ"]:
-                self.pc += 2
+                jump_reg = self.RAM[self.pc + 1]
+                if self.FL == 1:
+                    self.pc = self.reg[jump_reg]
+                else:
+                    self.pc += 2
 
             elif ir == self.codes["JNE"]:
-                self.pc += 2
+                jump_reg = self.RAM[self.pc + 1]
+                if self.FL == 0:
+                    self.pc = self.reg[jump_reg]
+                else:
+                    self.pc += 2
 
             else:
                 print(f"Unknown instruction {ir}")
