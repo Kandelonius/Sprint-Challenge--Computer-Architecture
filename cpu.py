@@ -40,6 +40,7 @@ class CPU:
             "AND": 0b10101000,
             "OR": 0b10101010,
             "XOR": 0b10101011,
+            "SHL": 0b10101100,
         }
 
     def load(self):
@@ -280,6 +281,18 @@ class CPU:
                 reg_num1 = self.RAM[self.pc + 1]
                 reg_num2 = self.RAM[self.pc + 2]
                 self.alu("AND", reg_num1, reg_num2)
+                self.pc += 3
+
+            elif ir == self.codes["OR"]:
+                reg_num1 = self.RAM[self.pc + 1]
+                reg_num2 = self.RAM[self.pc + 2]
+                self.alu("OR", reg_num1, reg_num2)
+                self.pc += 3
+
+            elif ir == self.codes["XOR"]:
+                reg_num1 = self.RAM[self.pc + 1]
+                reg_num2 = self.RAM[self.pc + 2]
+                self.alu("XOR", reg_num1, reg_num2)
                 self.pc += 3
 
             else:
