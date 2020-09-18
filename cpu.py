@@ -250,7 +250,8 @@ class CPU:
                 self.pc += 3
 
             elif ir == self.codes["JMP"]:
-                self.pc += 2
+                jump_reg = self.RAM[self.pc + 1]
+                self.pc = self.reg[jump_reg]
 
             elif ir == self.codes["JEQ"]:
                 jump_reg = self.RAM[self.pc + 1]
