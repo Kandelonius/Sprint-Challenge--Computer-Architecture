@@ -20,6 +20,8 @@ class CPU:
 
         self.pc = 0
 
+        self.FL = 1
+
         self.running = False
         self.codes = {
             "LDI": 0b10000010,
@@ -31,6 +33,10 @@ class CPU:
             "PUSH": 0b01000101,
             "CALL": 0b01010000,
             "RET": 0b00010001,
+            "CMP": 0b10100111,
+            "JMP": 0b01010100,
+            "JEQ": 0b01010101,
+            "JNE": 0b01010110,
         }
 
     def load(self):
@@ -53,7 +59,7 @@ class CPU:
                     self.RAM[address] = int(instruction, 2)
                     address += 1
         except FileNotFoundError:
-            print(f"Couldn't open {sys.argv[1]}")
+            print(f"Could not open {sys.argv[1]}")
             sys.exit()
 
         if address == 0:
@@ -101,6 +107,9 @@ class CPU:
             self.reg[reg_a] *= self.reg[reg_b]
         elif op == "DIV":
             self.reg[reg_a] /= self.reg[reg_b]
+        elif op == "CMP":
+            if self.reg[reg_a] == self.reg[reg_b]:
+                pass
         else:
             raise Exception("Unsupported ALU operation")
 
@@ -231,6 +240,21 @@ class CPU:
                 self.reg[self.SP] += 1
                 # Set the PC to it
                 self.pc = return_addr
+
+            elif ir == self.codes["CMP"]:
+                reg_num1 = self.RAM[self.pc + 1]
+                reg_num2 = self.RAM[self.pc + 2]
+                self.alu("CMP", reg_num1, reg_num2)
+                self.pc += 3
+
+            elif ir == self.codes["JMP"]:
+                self.pc += 2
+
+            elif ir == self.codes["JEQ"]:
+                self.pc += 2
+
+            elif ir == self.codes["JNE"]:
+                self.pc += 2
 
             else:
                 print(f"Unknown instruction {ir}")
